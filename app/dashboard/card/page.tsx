@@ -26,6 +26,7 @@ import { SearchBar } from '@/components/table/SearchBar';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import ErrorModal from "@/components/ErrorModal";
 import { exportToExcel, fetchAllCards } from '@/app/api/document/document.api';
+import { Spinner } from '@/components/Spinner';
 
 export default function CardPage() {
   const { filters, setFilters, loading, meta, items, fetchData } = useCardStore();
@@ -200,7 +201,7 @@ export default function CardPage() {
                     <Button onClick={handleExport}>Exportar Excel</Button>
                   </div>
                 </div>
-                {loading ?  :
+                {loading ? <Spinner /> :
                   <Table>
                     <CardTableHeader />
                     <TableBody>

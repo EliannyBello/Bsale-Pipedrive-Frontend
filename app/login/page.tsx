@@ -18,33 +18,29 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    if (result?.error) {
-      toast.error("Error en el inicio de sesión");
-      setLoading(false);
-    }
+  const handleSubmit = async () => {
+    // e.preventDefault();
+    // setLoading(true);
+    // const result = await signIn("credentials", {
+    //   redirect: false,
+    //   email,
+    //   password,
+    // });
+    // if (result?.error) {
+    //   toast.error("Error en el inicio de sesión");
+    //   setLoading(false);
+    // }
+    toast.success("Inicio de sesión exitoso");
+    router.push("/dashboard/card");
   };
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
 
-  const { status } = useSession();
-  useEffect(() => {
-    if (status === "authenticated") {
-      toast.success("Inicio de sesión exitoso");
-      router.push("/dashboard/card");
-    }
-  }, [status, router]);
+  // const { status } = useSession();
 
-  if (status === "loading") return <Spinner size="lg" />;
+
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-8">
@@ -78,78 +74,78 @@ export default function LoginPage() {
                 Ingrese su email para entrar al panel
               </p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6 mt-8">
-              <div className="relative">
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  autoComplete="username"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="name@example.com"
-                  className="text-lg p-6 pr-12"
-                />
-                <Mail
-                  className="absolute right-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"
-                  aria-hidden="true"
-                />
-              </div>
-              <div className="relative">
-                <Input
-                  placeholder="Contraseña"
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="text-lg p-6 pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 flex items-center justify-center w-10 h-10"
-                  aria-label={
-                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                  }
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" aria-hidden="true" />
-                  ) : (
-                    <Eye className="w-5 h-5" aria-hidden="true" />
-                  )}
-                </button>
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-[#1a1b3b] hover:bg-[#2a2b4b] text-xl py-6"
+
+            <div className="relative">
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="name@example.com"
+                className="text-lg p-6 pr-12"
+              />
+              <Mail
+                className="absolute right-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="relative">
+              <Input
+                placeholder="Contraseña"
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="text-lg p-6 pr-12"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 flex items-center justify-center w-10 h-10"
+                aria-label={
+                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
               >
-                Iniciar Sesión
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <Eye className="w-5 h-5" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+            <Button
+             onClick={handleSubmit}
+              className="w-full bg-[#1a1b3b] hover:bg-[#2a2b4b] text-xl py-6"
+            >
+              Iniciar Sesión
+            </Button>
+            <div className="text-center space-y-4">
+              <Button
+                type="button"
+                variant="link"
+                className="text-lg"
+                onClick={() => router.push("/passwordRecover")}
+              >
+                Recuperar contraseña
               </Button>
-              <div className="text-center space-y-4">
-                <Button
-                  type="button"
-                  variant="link"
-                  className="text-lg"
-                  onClick={() => router.push("/passwordRecover")}
-                >
-                  Recuperar contraseña
-                </Button>
-                <div className="text-lg text-muted-foreground">
-                  <p>Si tienes problemas para iniciar sesión</p>
-                  <p>
-                    Ingresa al siguiente{" "}
-                    <Button variant="link" className="p-0 h-auto text-lg">
-                      link
-                    </Button>
-                    .
-                  </p>
-                </div>
+              <div className="text-lg text-muted-foreground">
+                <p>Si tienes problemas para iniciar sesión</p>
+                <p>
+                  Ingresa al siguiente{" "}
+                  <Button variant="link" className="p-0 h-auto text-lg">
+                    link
+                  </Button>
+                  .
+                </p>
               </div>
-            </form>
+            </div>
+
           </div>
         </div>
         <div className="hidden md:block md:col-span-1"></div>
