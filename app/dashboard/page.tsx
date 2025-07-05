@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {DateRangeFilter} from "@/components/DateRangeFilter";
 
+
 const chartData = [
     { month: "Jan", amount: 5000 },
     { month: "Feb", amount: 1500 },
