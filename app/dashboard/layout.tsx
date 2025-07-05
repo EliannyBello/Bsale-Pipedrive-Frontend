@@ -18,32 +18,13 @@ const pillColor = {
 
 const options: Option[] = [
   {
-    name: "Shopify - Defontana",
+    name: "Bsale - Pipedrive",
     leftColor: pillColor.shopify.color,
     rightColor: pillColor.defontana.color,
     modules: [
       // { label: "Inicio", href: "/dashboard" },
-      { label: "Cartas", href: "/dashboard/card" },
+      { label: "Clientes", href: "/dashboard/client" },
       { label: "Productos", href: "/dashboard/products" },
-      { label: "Configuraciones", href: "/dashboard/configuraciones" },
-    ],
-  },
-  {
-    name: "Bluexpress - Defontana",
-    leftColor: pillColor.blueExpress.color,
-    rightColor: pillColor.defontana.color,
-    modules: [
-      { label: "Inicio", href: "/dashboard" },
-      { label: "Configuraciones", href: "/dashboard/configuraciones" },
-    ],
-  },
-  {
-    name: "otra",
-    leftColor: "#FFF",
-    rightColor: "#000",
-    modules: [
-      { label: "Inicio", href: "/dashboard" },
-      { label: "Traslados", href: "/dashboard/traslados" },
       { label: "Configuraciones", href: "/dashboard/configuraciones" },
     ],
   },

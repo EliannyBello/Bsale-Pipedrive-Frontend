@@ -6,9 +6,7 @@ import { addDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { MoreHorizontal } from "lucide-react";
 
-import { useCardStore } from '@/app/store/cardStore';
-import { getCardId } from '@/app/api/cards/card.api';
-import { ICardResponse } from '@/app/api/cards/card.interface';
+
 import { EnumLang, EnumState } from '@/app/api/common/interface/queryParams.interface';
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,26 +15,29 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { CardTableHeader } from '@/components/table/headers/CardTableHeader';
-import { CardTableRow } from '@/components/table/rows/CardTableRow';
+import { ClientTableHeader } from '@/components/table/headers/ClientTableHeader'
+import { ClientTableRow } from '@/components/table/rows/ClientTableRow'
 import { TablePagination } from '@/components/table/TablePagination';
-import CardModal from '@/components/modal/CardModal';
+
 import { CardFilter } from '@/components/filters/CardFilter';
 import { SearchBar } from '@/components/table/SearchBar';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import ErrorModal from "@/components/ErrorModal";
 import { exportToExcel, fetchAllCards } from '@/app/api/document/document.api';
 import { Spinner } from '@/components/Spinner';
+import { IClientResponse } from '@/app/api/clients/client.interface';
+import { useClientStore } from '@/app/store/clientStore';
+;
 
 export default function CardPage() {
-  const { filters, setFilters, loading, meta, items, fetchData } = useCardStore();
+  const { filters, setFilters, loading, meta, items, fetchData } = useClientStore()
 
   const [hasOpenErrorModal, setOpenErrorModal] = useState(false);
-  const [cardData, setCardData] = useState<ICardResponse | null>(null);
+  const [cardData, setCardData] = useState<IClientResponse | null>(null);
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filtersModal, setFiltersModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('magic');
+  const [activeTab, setActiveTab] = useState('datos');
 
   //ABRIR MODAL DE ERROR
   const showErrors = (error: string) => {
@@ -50,49 +51,49 @@ export default function CardPage() {
   }
 
   // ABRIR MODAL DE DETALLES
-  const showDetails = async (card: ICardResponse) => {
-    try {
-      const { _id } = card;
-      setCardData(null);
-      const response: ICardResponse = await getCardId(_id);
-      setCardData(response)
-      setDetailsModalOpen(true);
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Error al cargar los detalles");
-      setOpenErrorModal(true);
-      // Cerramos el modal de detalles en caso de error
-      setDetailsModalOpen(false);
-    }
-  }
+  // const showDetails = async (client: IClientResponse) => {
+  //   try {
+  //     const { _id } = client;
+  //     setCardData(null);
+  //     const apiResponse = await getClient(_id);
+  //     setCardData(apiResponse.data);
+  //     setDetailsModalOpen(true);
+  //   } catch (error) {
+  //     setErrorMessage(error instanceof Error ? error.message : "Error al cargar los detalles");
+  //     setOpenErrorModal(true);
+  //     // Cerramos el modal de detalles en caso de error
+  //     setDetailsModalOpen(false);
+  //   }
+  // }
 
     
   // Muestra el modal de detalles con la información de la carta
-  const handleActions = (card: ICardResponse) => (
-    <div className="flex space-x-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={() => setDetailsModalOpen(true)} onClick={() => showDetails(card)}>Ver Detalles</DropdownMenuItem>
-          {card.status === 'Error' && (
-            <DropdownMenuItem
-              onClick={() => showErrors('Error message')}
-            >Ver Error</DropdownMenuItem>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {isDetailsModalOpen && cardData && (
-        <CardModal
-          data={cardData ? [cardData] : []}
-          open={isDetailsModalOpen}
-          onOpenChange={setDetailsModalOpen}
-        />
-      )}
-    </div>
-  )
+  // const handleActions = (card: ICardResponse) => (
+  //   <div className="flex space-x-2">
+  //     <DropdownMenu>
+  //       <DropdownMenuTrigger asChild>
+  //         <Button variant="ghost" className="h-8 w-8 p-0">
+  //           <MoreHorizontal className="h-4 w-4" />
+  //         </Button>
+  //       </DropdownMenuTrigger>
+  //       <DropdownMenuContent align="end">
+  //         <DropdownMenuItem onSelect={() => setDetailsModalOpen(true)} onClick={() => showDetails(card)}>Ver Detalles</DropdownMenuItem>
+  //         {card.status === 'Error' && (
+  //           <DropdownMenuItem
+  //             onClick={() => showErrors('Error message')}
+  //           >Ver Error</DropdownMenuItem>
+  //         )}
+  //       </DropdownMenuContent>
+  //     </DropdownMenu>
+  //     {isDetailsModalOpen && cardData && (
+  //       <CardModal
+  //         data={cardData ? [cardData] : []}
+  //         open={isDetailsModalOpen}
+  //         onOpenChange={setDetailsModalOpen}
+  //       />
+  //     )}
+  //   </div>
+  // )
 
   // Maneja el cambio de página en la paginación
   const handlePageChange = (page: number) => {
@@ -187,11 +188,9 @@ export default function CardPage() {
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="magic">Magic4Ever</TabsTrigger>
-            <TabsTrigger value="OnePiece">One Piece</TabsTrigger>
-            <TabsTrigger value="pokemon">Pokemon</TabsTrigger>
+            <TabsTrigger value="datos">Tabla de Clientes</TabsTrigger>
           </TabsList>
-          <TabsContent value="magic">
+          <TabsContent value="datos">
             <Card className="p-1">
               <CardContent>
                 <div className="flex justify-between my-5" >
@@ -203,20 +202,15 @@ export default function CardPage() {
                 </div>
                 {loading ? <Spinner /> :
                   <Table>
-                    <CardTableHeader />
+                    <ClientTableHeader />
                     <TableBody>
-                      {(items.map((card) => (
-                        <CardTableRow
-                          key={card._id}
-                          item={card}
-                          isSelected={false}
-                          isExpanded={false}
-                          onSelect={() => { }}
-                          onExpand={() => { }}
-                          handleActions={handleActions(card)}
+                      {items.map((client) => (
+                        <ClientTableRow
+                          key={client._id}
+                          item={client}
+                          // handleActions={handleActions(client)}
                         />
-                      ))
-                      )}
+                      ))}
                     </TableBody>
                   </Table>
                 }

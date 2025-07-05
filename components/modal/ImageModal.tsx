@@ -1,6 +1,6 @@
 "use client"
 
-import { ICardResponse } from "@/app/api/cards/card.interface"
+import { ICardResponse } from "@/app/api/clients/client.interface"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 

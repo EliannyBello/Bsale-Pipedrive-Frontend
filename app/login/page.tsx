@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useState, FormEvent, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { signIn, useSession } from "next-auth/react";
-import { Spinner } from "@/components/Spinner";
-import { url } from "inspector";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,63 +15,39 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async () => {
-    // e.preventDefault();
-    // setLoading(true);
-    // const result = await signIn("credentials", {
-    //   redirect: false,
-    //   email,
-    //   password,
-    // });
-    // if (result?.error) {
-    //   toast.error("Error en el inicio de sesión");
-    //   setLoading(false);
-    // }
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result?.error) {
+      toast.error("Error en el inicio de sesión");
+      setLoading(false);
+      return;
+    }
     toast.success("Inicio de sesión exitoso");
-    router.push("/dashboard/card");
+    router.push("/dashboard/client");
   };
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
 
-  // const { status } = useSession();
-
-
-
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-8">
-      <div className="hidden md:flex md:col-span-2 bg-[#1a1b3b] items-center justify-center p-8 relative">
-        <Image
-          src="/fondo-.svg"
-          alt="Background Pattern"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
-      </div>
-      <div className="md:col-span-6 grid grid-cols-1 md:grid-cols-5">
-        <div className="hidden md:block md:col-span-1"></div>
-        <div className="flex items-center justify-center p-8 md:col-span-3">
-          <div className="w-full max-w-lg">
-            <div className="space-y-6 text-center">
-              <div className="flex justify-center">
-                <Image
-                  src={
-                    "https://cdnx.jumpseller.com/magic4ever/image/16467447/resize/200/100?1620744896"
-                  }
-                  alt="Logo Magic4Ever"
-                  width={250}
-                  height={150}
-                  priority
-                />
-              </div>
-              <h2 className="text-3xl font-semibold">Panel de Integración</h2>
-              <p className="text-xl text-muted-foreground">
-                Ingrese su email para entrar al panel
-              </p>
-            </div>
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+        <div className="space-y-6 text-center">
+          <h2 className="text-3xl font-semibold">Inicio de Sesión</h2>
+          <p className="text-xl text-gray-600">
+            Ingrese su email y contraseña para acceder
+          </p>
+        </div>
 
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <div className="relative">
               <Input
                 id="email"
@@ -85,13 +58,15 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="name@example.com"
-                className="text-lg p-6 pr-12"
+                className="text-lg p-4 pr-12 w-full"
               />
               <Mail
-                className="absolute right-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none"
                 aria-hidden="true"
               />
             </div>
+          </div>
+          <div>
             <div className="relative">
               <Input
                 placeholder="Contraseña"
@@ -102,7 +77,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="text-lg p-6 pr-12"
+                className="text-lg p-4 pr-12 w-full"
               />
               <button
                 type="button"
@@ -119,36 +94,16 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-            <Button
-             onClick={handleSubmit}
-              className="w-full bg-[#1a1b3b] hover:bg-[#2a2b4b] text-xl py-6"
-            >
-              Iniciar Sesión
-            </Button>
-            <div className="text-center space-y-4">
-              <Button
-                type="button"
-                variant="link"
-                className="text-lg"
-                onClick={() => router.push("/passwordRecover")}
-              >
-                Recuperar contraseña
-              </Button>
-              <div className="text-lg text-muted-foreground">
-                <p>Si tienes problemas para iniciar sesión</p>
-                <p>
-                  Ingresa al siguiente{" "}
-                  <Button variant="link" className="p-0 h-auto text-lg">
-                    link
-                  </Button>
-                  .
-                </p>
-              </div>
-            </div>
-
           </div>
-        </div>
-        <div className="hidden md:block md:col-span-1"></div>
+          <Button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-300 text-xl py-4"
+            disabled={loading}
+          >
+            {loading ? "Iniciando Sesión..." : "Iniciar Sesión"}
+          </Button>
+        </form>
+
       </div>
     </div>
   );

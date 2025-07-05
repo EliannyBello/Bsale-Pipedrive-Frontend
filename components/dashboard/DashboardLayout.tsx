@@ -3,7 +3,6 @@ import React from 'react'
 import  { MainNav } from '@/components/dashboard/MainNav'
 import { UserNav } from '@/components/dashboard/UserNav'
 import { DashboardProvider, Option } from "@/app/context/DashboardContext"
-import {Logo} from "@/components/Logo";
 import { useSession } from 'next-auth/react';
 
 interface DashboardLayoutProps {
@@ -18,7 +17,7 @@ export default function DashboardLayout({ children, options }: DashboardLayoutPr
                 <div className="border-b bg-primary text-white">
                     <div className="flex h-16 items-center px-4">
                         <div className="flex items-center space-x-4">
-                            <Logo/>
+                     
                             {/* <NavSelector /> */}
                         </div>
                         <MainNav
@@ -28,7 +27,7 @@ export default function DashboardLayout({ children, options }: DashboardLayoutPr
                         <div className="ml-auto flex items-center space-x-4">
                             <UserNav user={{
                                 name: data?.user.name || "Usuario desconocido",
-                                company: "Margic4Ever",
+                                company: "Integración Bsale-Pipedrive",
                                 avatar: "https://github.com/shadcn.png"
                             }} />
                         </div>

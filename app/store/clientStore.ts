@@ -2,12 +2,11 @@ import { create } from 'zustand';
 import { ISortOrder } from "@/app/api/common/interface/queryParams.interface";
 import { IMeta } from "@/app/api/common/interface/apiResponse.interface";
 import { ITEMS_PER_PAGE } from "@/app/api/common/api-client/app.api";
-import { ICardResponse } from '../api/cards/card.interface';
-import { getCards } from '../api/cards/card.api';
+import { IClientResponse } from '../api/clients/client.interface';
+import { getClient } from '../api/clients/client.api';
 
-
-interface CardStore {
-    items: ICardResponse[]
+interface ClientStore {
+    items: IClientResponse[];
     meta: IMeta;
     loading: boolean;
     error: string | null;
@@ -22,15 +21,11 @@ interface CardStore {
         status?: string;
         lang?: string;
     };
-    setFilters: (filters: Partial<CardStore['filters']>) => void;
+    setFilters: (filters: Partial<ClientStore['filters']>) => void;
     fetchData: () => Promise<void>;
 }
 
-const mapOrders = (card: ICardResponse[]): ICardResponse[] => card.map(card => ({
-        ...card,
-    }));
-
-export const useCardStore = create<CardStore>((set, get) => ({
+export const useClientStore = create<ClientStore>((set, get) => ({
     items: [],
     meta: {
         totalItems: 0,
@@ -54,14 +49,11 @@ export const useCardStore = create<CardStore>((set, get) => ({
         lang: '',
     },
     setFilters: (newFilters) => {
-        set(status => ({ filters: { ...status.filters, ...newFilters } }));
-        set(lang => ({ filters: { ...lang.filters, lang: newFilters.lang } }));
+        set(state => ({ filters: { ...state.filters, ...newFilters } }));
         get().fetchData();
     },
     fetchData: async () => {
         const { filters } = get();
-        
-        
         set({ loading: true, error: null });
 
         try {
@@ -73,15 +65,14 @@ export const useCardStore = create<CardStore>((set, get) => ({
                 ...(filters.search && { search: filters.search }),
                 ...(filters.to && { to: filters.to }),
                 ...(filters.from && { from: filters.from }),
-                ...(filters.status && { status: filters.status}),
+                ...(filters.status && { status: filters.status }),
                 ...(filters.lang && { lang: filters.lang }),
             });
 
-            const { items, meta } = await getCards(queryParams.toString());
-            console.log('bandera::',items);
+            const response = await getClient(queryParams.toString());
             set({
-                items: mapOrders(items),
-                meta: meta,
+                items: response.items || [],
+                meta: response.meta,
                 loading: false,
             });
         } catch (error) {
