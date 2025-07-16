@@ -25,7 +25,7 @@ export function MainNav({
                     className={cn(
                         "text-sm font-medium transition-colors px-3 py-1 rounded-lg",
                         currentPath === item.href
-                            ? "text-white font-bold bg-blue-800/80 shadow-md border border-white"
+                            ? "text-white font-bold"
                             : "text-muted-foreground hover:text-primary-foreground"
                     )}
                 >

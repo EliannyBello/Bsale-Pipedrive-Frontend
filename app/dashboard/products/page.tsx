@@ -226,7 +226,11 @@ export default function ProductPage() {
                     <Button onClick={handleExport}>Exportar Excel</Button>
                   </div>
                 </div>
-                {loading ? :
+                {loading ? (
+                  <div className="flex justify-center items-center py-10">
+                    <span>Cargando productos...</span>
+                  </div>
+                ) : (
                   <Table>
                     <ProductTableHeader />
                     <TableBody>
@@ -244,7 +248,7 @@ export default function ProductPage() {
                       )}
                     </TableBody>
                   </Table>
-                }
+                )}
                 <div className='mt-5'>
                   <TablePagination meta={meta} onPageChange={handlePageChange} />
                 </div>
