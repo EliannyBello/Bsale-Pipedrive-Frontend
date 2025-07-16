@@ -19,7 +19,7 @@ import { ClientTableHeader } from '@/components/table/headers/ClientTableHeader'
 import { ClientTableRow } from '@/components/table/rows/ClientTableRow'
 import { TablePagination } from '@/components/table/TablePagination';
 
-import { CardFilter } from '@/components/filters/CardFilter';
+
 import { SearchBar } from '@/components/table/SearchBar';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import ErrorModal from "@/components/ErrorModal";
@@ -27,23 +27,19 @@ import { exportToExcel, fetchAllCards } from '@/app/api/document/document.api';
 import { Spinner } from '@/components/Spinner';
 import { IClientResponse } from '@/app/api/clients/client.interface';
 import { useClientStore } from '@/app/store/clientStore';
+import { getClient } from '@/app/api/clients/client.api';
 ;
 
 export default function CardPage() {
   const { filters, setFilters, loading, meta, items, fetchData } = useClientStore()
 
   const [hasOpenErrorModal, setOpenErrorModal] = useState(false);
-  const [cardData, setCardData] = useState<IClientResponse | null>(null);
+  const [clientData, setClientData] = useState<IClientResponse | null>(null);
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filtersModal, setFiltersModal] = useState(false);
   const [activeTab, setActiveTab] = useState('datos');
 
-  //ABRIR MODAL DE ERROR
-  const showErrors = (error: string) => {
-    setErrorMessage(error);
-    setOpenErrorModal(true);
-  };
 
   // ABRE O CIERRA EL MODAL DE FILTROS
   const onOpenChange = (isOpen: boolean) => {
@@ -51,49 +47,21 @@ export default function CardPage() {
   }
 
   // ABRIR MODAL DE DETALLES
-  // const showDetails = async (client: IClientResponse) => {
-  //   try {
-  //     const { _id } = client;
-  //     setCardData(null);
-  //     const apiResponse = await getClient(_id);
-  //     setCardData(apiResponse.data);
-  //     setDetailsModalOpen(true);
-  //   } catch (error) {
-  //     setErrorMessage(error instanceof Error ? error.message : "Error al cargar los detalles");
-  //     setOpenErrorModal(true);
-  //     // Cerramos el modal de detalles en caso de error
-  //     setDetailsModalOpen(false);
-  //   }
-  // }
-
-    
-  // Muestra el modal de detalles con la información de la carta
-  // const handleActions = (card: ICardResponse) => (
-  //   <div className="flex space-x-2">
-  //     <DropdownMenu>
-  //       <DropdownMenuTrigger asChild>
-  //         <Button variant="ghost" className="h-8 w-8 p-0">
-  //           <MoreHorizontal className="h-4 w-4" />
-  //         </Button>
-  //       </DropdownMenuTrigger>
-  //       <DropdownMenuContent align="end">
-  //         <DropdownMenuItem onSelect={() => setDetailsModalOpen(true)} onClick={() => showDetails(card)}>Ver Detalles</DropdownMenuItem>
-  //         {card.status === 'Error' && (
-  //           <DropdownMenuItem
-  //             onClick={() => showErrors('Error message')}
-  //           >Ver Error</DropdownMenuItem>
-  //         )}
-  //       </DropdownMenuContent>
-  //     </DropdownMenu>
-  //     {isDetailsModalOpen && cardData && (
-  //       <CardModal
-  //         data={cardData ? [cardData] : []}
-  //         open={isDetailsModalOpen}
-  //         onOpenChange={setDetailsModalOpen}
-  //       />
-  //     )}
-  //   </div>
-  // )
+  const showDetails = async (client: IClientResponse) => {
+    try {
+      const { _id } = client;
+      const clientDetails = await getClient(_id);
+      if (!clientDetails) {
+        throw new Error("No se encontraron detalles del cliente");
+      }
+      setDetailsModalOpen(true);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Error al cargar los detalles");
+      setOpenErrorModal(true);
+      // Cerramos el modal de detalles en caso de error
+      setDetailsModalOpen(false);
+    }
+  }
 
   // Maneja el cambio de página en la paginación
   const handlePageChange = (page: number) => {
@@ -105,17 +73,13 @@ export default function CardPage() {
     setFilters({ ...filters, status })
   }
 
-  // Maneja el cambio de idioma en los filtros
-  const handleLangChange = (lang: EnumLang | string) => {
-    setFilters({ ...filters, lang })
-  }
-
   // LIMPIA LOS FILTROS
   const handleClearFilters = () => {
     setFilters({
       ...filters, // Mantiene los otros filtros intactos
       status: undefined,
-      lang: undefined // ⬅️ Asegúrate de usar `undefined` en lugar de `null`
+      lang: undefined, // 
+      page: 1,
     });
     onOpenChange(false)
   };
@@ -126,17 +90,12 @@ export default function CardPage() {
 
   // BUSCA CARTAS POR NOMBRE
   const handleSearchChange = useCallback(async (search: string) => {
-    setFilters({ ...filters, search })
+    setFilters({ ...filters, search, page: 1 });
   }, [])
   const memoizedSearchBar = useMemo(() => <SearchBar initialSearchValue="" onSearchChangeAction={handleSearchChange} loading={loading} />,
     [handleSearchChange, loading],
   )
 
-  // INICIALIZA EL RANGO DE FECHAS
-  const initialDateRange: DateRange = {
-    from: addDays(new Date(), -30),
-    to: new Date(),
-  }
 
   // MANEJA EL CAMBIO DE FECHA
   const handleChangeDate = (dateRange: DateRange | undefined) => {
@@ -151,6 +110,7 @@ export default function CardPage() {
         ...filters,
         from: from,
         to: to,
+        page: 1, 
       })
     }
   }
@@ -174,6 +134,31 @@ export default function CardPage() {
     }
   };
 
+
+    // Manejo de acciones del menú desplegable
+  const handleActions = (client: IClientResponse) => (
+    <div className="flex space-x-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onSelect={() => setDetailsModalOpen(true)} onClick={() => showDetails(client)}>Ver Detalles</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/* {isDetailsModalOpen && receptionData && (
+        <ReceptionModalDetails
+          data={receptionData}
+          open={isDetailsModalOpen}
+          onOpenChange={setDetailsModalOpen}
+          loading={loading}
+        />
+      )} */}
+    </div>
+  )
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -183,8 +168,8 @@ export default function CardPage() {
     <>
       <div className="flex-1 space-y-6 p-8 pt-6">
         <div className="flex justify-between">
-          <h1 className="text-2xl font-bold">Panel de Cartas</h1>
-          <DateRangeFilter onFilter={handleChangeDate} handleClearDate={handleClearDate} initialDateRange={initialDateRange} />
+          <h1 className="text-2xl font-bold">Panel de Clientes</h1>
+          <DateRangeFilter onFilter={handleChangeDate} handleClearDate={handleClearDate} />
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
@@ -208,7 +193,7 @@ export default function CardPage() {
                         <ClientTableRow
                           key={client._id}
                           item={client}
-                          // handleActions={handleActions(client)}
+                          handleActions={handleActions(client)}
                         />
                       ))}
                     </TableBody>
@@ -229,14 +214,6 @@ export default function CardPage() {
         description="No se pudo procesar la orden de abastecimiento"
         message={errorMessage ? errorMessage : "Lo sentimos, ha ocurrido un error al procesar su orden de abastecimiento. Nuestro equipo técnico ha sido notificado y estamos trabajando para resolverlo. Por favor, intente nuevamente más tarde."}
         textButton="Entendido"
-      />
-      <CardFilter
-        open={filtersModal}
-        onOpenChange={setFiltersModal}
-        handleStateChange={handleStateChange}
-        handleClearFilters={handleClearFilters}
-        handleApplyFilters={handleApplyFilters}
-        handleLangChage={handleLangChange}
       />
 
     </>

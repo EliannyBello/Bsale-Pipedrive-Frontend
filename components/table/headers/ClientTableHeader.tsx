@@ -8,7 +8,7 @@ import {
 export function ClientTableHeader() {
     return (
         <TableHeader>
-            <TableRow>
+            <TableRow className="bg-gray-100">
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">Nombre</TableHead>
                 <TableHead className="text-center">Apellido</TableHead>
@@ -18,10 +18,6 @@ export function ClientTableHeader() {
                 <TableHead className="text-center">Ciudad</TableHead>
                 <TableHead className="text-center">Dirección</TableHead>
                 <TableHead className="text-center">Estado</TableHead>
-                <TableHead className="text-center">Puntos</TableHead>
-                <TableHead className="text-center">Max Crédito</TableHead>
-                <TableHead className="text-center">Creado</TableHead>
-                <TableHead className="text-center">Actualizado</TableHead>
                 <TableHead className="text-center">Acciones</TableHead>
             </TableRow>
         </TableHeader>

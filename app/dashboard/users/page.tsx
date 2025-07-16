@@ -126,7 +126,11 @@ export default function UsersPage() {
             </div>
             <Card className='my-3'>
                 <CardContent className='m-3'>
-                    {loading ? :
+                    {loading ? (
+                        <div className="flex justify-center items-center h-32">
+                            <span>Cargando...</span>
+                        </div>
+                    ) : (
                         <Table>
                             <UserTableHeader />
                             <TableBody>
@@ -144,7 +148,7 @@ export default function UsersPage() {
                                 )}
                             </TableBody>
                         </Table>
-                    }
+                    )}
                     <div className='mt-5'>
                         <TablePagination meta={meta} onPageChange={handlePageChange} />
                     </div>
