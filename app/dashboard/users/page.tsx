@@ -149,9 +149,9 @@ export default function UsersPage() {
                             </TableBody>
                         </Table>
                     )}
-                    <div className='mt-5'>
+                    {/* <div className='mt-5'>
                         <TablePagination meta={meta} onPageChange={handlePageChange} />
-                    </div>
+                    </div> */}
                 </CardContent>
             </Card>
             <ConfirmationDialog

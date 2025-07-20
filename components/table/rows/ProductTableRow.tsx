@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { TableCell, TableRow, } from "@/components/ui/table"
 import { Badge } from '@/components/ui/badge'
 import Image from "next/image";
-import espanaFlag from "@/public/espana.png";
-import usaFlag from "@/public/estados-unidos.png";
+
 import { IProductResponse } from '@/app/api/products/product.interface';
-import ImageModalProduct from '@/components/modal/ImageModalProduct';
+
 import StockModal from '@/components/modal/StockModal';
 
 
@@ -67,13 +66,6 @@ export function ProductTableRow({ item, handleActions }: ProductTableRowProps) {
                     {handleActions}
                 </TableCell>
             </TableRow>
-            {isModalOpen && (
-                <ImageModalProduct
-                    data={item}
-                    open={isModalOpen}
-                    onOpenChangeAction={setIsModalOpen}
-                />
-            )}
             {isStockModalOpen && (
                 <StockModal
                     data={item}

@@ -11,10 +11,10 @@ const apiClientInstance = async () => {
     return instance;
 };
 
-export async function getUsers(query: string): Promise<IApiResponse<UsersResponse>> {
+export async function getUsers(query: string): Promise<IApiResponse<UsersResponse[]>> {
     const instance = await apiClientInstance();
-    const {data} = await instance.get<IApiResponse<UsersResponse>>(`${URL_BASE}?${query}`);
-    return data
+    const {data} = await instance.get<IApiResponse<UsersResponse[]>>(`${URL_BASE}?${query}`);
+    return data;
 }
 
 export async function getUserId(_id: string): Promise<UsersResponse> {

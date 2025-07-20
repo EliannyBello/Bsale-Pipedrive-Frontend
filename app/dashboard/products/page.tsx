@@ -7,7 +7,7 @@ import { DateRange } from 'react-day-picker';
 import { MoreHorizontal } from "lucide-react";
 
 
-import { EnumLang, EnumState } from '@/app/api/common/interface/queryParams.interface';
+import { EnumState } from '@/app/api/common/interface/queryParams.interface';
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import { Table, TableBody } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { TablePagination } from '@/components/table/TablePagination';
-import CardModal from '@/components/modal/CardModal';
+
 import { SearchBar } from '@/components/table/SearchBar';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import ErrorModal from "@/components/ErrorModal";
@@ -38,7 +38,7 @@ export default function ProductPage() {
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filtersModal, setFiltersMosdal] = useState(false);
-  const [activeTab, setActiveTab] = useState('magic');
+  const [activeTab, setActiveTab] = useState('data');
   const [isStockModalOpen, setStockModalOpen] = useState(false);
 
   //ABRIR MODAL DE ERROR
@@ -208,13 +208,11 @@ export default function ProductPage() {
       <div className="flex-1 space-y-6 p-8 pt-6">
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Panel de Productos Jumpseller</h1>
-          <DateRangeFilter onFilter={handleChangeDate} handleClearDate={handleClearDate} initialDateRange={initialDateRange} />
+          <DateRangeFilter onFilter={handleChangeDate} handleClearDate={handleClearDate} />
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="magic">Magic4Ever</TabsTrigger>
-            <TabsTrigger value="OnePiece">One Piece</TabsTrigger>
-            <TabsTrigger value="pokemon">Pokemon</TabsTrigger>
+            <TabsTrigger value="data">Tabla de Productos</TabsTrigger>
           </TabsList>
           <TabsContent value="magic">
             <Card className="p-1">

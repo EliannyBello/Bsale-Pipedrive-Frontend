@@ -76,7 +76,7 @@ export const usersStore = create<UserStore>((set, get) => ({
             const { items, meta } = await getUsers(queryParams.toString());
             console.log('bandera::',items);
             set({
-                items: mapOrders(items),
+                items: mapOrders(items.flat()),
                 meta: meta,
                 loading: false,
             });

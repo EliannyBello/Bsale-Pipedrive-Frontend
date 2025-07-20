@@ -66,7 +66,7 @@ const UserSettingsPage = () => {
                             </CardHeader>
                             <CardContent>
                                 {isLoading ? (
-                                    
+                                    <p>Cargando...</p>
                                 ) : user ? (
                                     <UserForm onSubmitAction={handleUpdateUser} user={user} />
                                 ) : (
